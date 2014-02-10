@@ -17,11 +17,6 @@ svg.append("path").datum({type: "Sphere"}) // append path and bind to datum
                   .attr("id", "globe")
                   .attr("d", path); // stores the path
 
-// d3.json("data.json", function(error, world) { // world is the data from data.json
-//   svg.selectAll("path.land")
-//   .data(topojson.feature(world, world.objects.land)) // bind the data from the json file, grab the part you want, and pass it to topojson to turn it from topojson (smaller) into geojson which we need to use
-// });
-
 d3.json("data.json", function(error, data) {
   svg.insert("path", ".graticule")
      .datum(topojson.feature(data, data.objects.land))
@@ -29,4 +24,27 @@ d3.json("data.json", function(error, data) {
      .attr("d", path);
 });
 
+var drag = d3.behavior.drag().on('drag', function() {
+  var start = {
+    lon: projection.rotate()[0],
+    lat: projection.rotate()[1]
+  };
+  var delta = {
+    x: d3.event.dx,
+    y: d3.event.dy
+  };
+  var scale = 0.25;
+  var end = {
+    lon: start.lon + delta.x * scale,
+    lat: start.lat - delta.y * scale
+  };
+  
+  end.lat = end.lat > 30 ? 30 : 
+            end.lat < -30 ? -30 :
+            end.lat;
+
+  projection.rotate([end.lon, end.lat]);
+
+  svg.selectAll("path").attr("d", path);
+});
 
