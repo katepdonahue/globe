@@ -22,6 +22,7 @@ d3.json("data.json", function(error, data) {
      .datum(topojson.feature(data, data.objects.land))
      .attr("class", "land")
      .attr("d", path);
+  svg.call(drag);
 });
 
 var drag = d3.behavior.drag().on('drag', function() {
@@ -38,7 +39,7 @@ var drag = d3.behavior.drag().on('drag', function() {
     lon: start.lon + delta.x * scale,
     lat: start.lat - delta.y * scale
   };
-  
+
   end.lat = end.lat > 30 ? 30 : 
             end.lat < -30 ? -30 :
             end.lat;
